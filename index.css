@@ -23,8 +23,8 @@ video {
     height: calc(10rem + 10px);
     line-height: calc(10rem + 10px);
     border-radius: calc(10rem + 10px);
-    border: 1px solid rgba(0, 0, 0, 0.5);
-    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(254, 254, 254, 0.5);
+    background-color: rgba(254, 254, 254, 0.5);
     text-align: center;
     font-size: calc(5rem + 5px);
     left: 50%;
