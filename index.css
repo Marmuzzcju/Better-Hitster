@@ -1,3 +1,18 @@
+@font-face {
+    font-family: Abel;
+    src: url('Abel-Regular.ttf');
+}
+
 body {
     background-color: aqua;
+    font-family: Abel;
+}
+
+video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    outline: 10px solid red;
 }
