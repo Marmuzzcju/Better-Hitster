@@ -16,3 +16,19 @@ video {
     z-index: 10;
     outline: 10px solid red;
 }
+
+#snapshot-trigger {
+    position: fixed;
+    width: calc(10rem + 10px);
+    height: calc(10rem + 10px);
+    line-height: calc(10rem + 10px);
+    border-radius: calc(10rem + 10px);
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
+    text-align: center;
+    font-size: calc(5rem + 5px);
+    left: 50%;
+    bottom: 20%;
+    transform: translate(-50%, 50%);
+    z-index: 20;
+}
