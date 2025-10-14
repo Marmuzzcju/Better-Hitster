@@ -1,6 +1,7 @@
 console.log('Hello World!');
 const 
 canvas = document.querySelector('#canvas'),
+video = document.createElement('video'),
 ctx = canvas.getContext('2d'),
 colors = {
     pink: "rgb(255, 2, 173)",
@@ -9,39 +10,74 @@ colors = {
     redish: "rgb(251, 103, 117)",
 };
 
+let
+QR_scan_width = 400,
+is_searching = false;
 
-let video = document.createElement('video');
-video.setAttribute('playsinline', '');
-video.setAttribute('autoplay', '');
-video.setAttribute('muted', '');
-document.body.appendChild(video);
 
-/* Setting up the constraint */
-let facingMode = "environment"; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
-let constraints = {
-  audio: false,
-  video: {
-   facingMode: facingMode
-  }
-};
+function setup(){
+    start_camera();
+}
 
-/* Stream it to video element */
-navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
-  video.srcObject = stream;
-});
+function start_camera(){
+    video.setAttribute('playsinline', '');
+    video.setAttribute('autoplay', '');
+    video.setAttribute('muted', '');
+    document.body.appendChild(video);
+
+    /* Setting up the constraint */
+    let facingMode = "environment"; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
+    let constraints = {
+    audio: false,
+    video: {
+    facingMode: facingMode
+    }
+    };
+
+    /* Stream it to video element */
+    navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
+        video.srcObject = stream;
+        add_video_overlay();
+        setTimeout(repeat_qr_search, 250, true);
+    });
+}
+
+function add_video_overlay(){
+    const v_w = video.videoWidth, v_h = video.videoHeight;
+    QR_scan_width = (v_h >= QR_scan_width) == (v_w >= QR_scan_width) ? QR_scan_width : (v_h > v_w ? v_w : v_h),
+    overlay = document.createElement('div');
+    overlay.classList.add('video_overlay');
+    overlay.style.width = `${QR_scan_width}px`;
+    overlay.style.height = `${QR_scan_width}px`;
+    console.log(`QR-scan width: ${QR_scan_width}`);
+    document.body.appendChild(overlay);
+}
+
+function repeat_qr_search(search){
+    is_searching = search ?? is_searching;
+    if(!is_searching) return;
+    search_qr_code();
+    setTimeout(repeat_qr_search, 250);
+}
+
 
 function search_qr_code(){
+    let
+    v_w = video.videoWidth, v_h = video.videoHeight,
+    offset_w = (v_w - QR_scan_width)/2,
+    offset_h = (v_h - QR_scan_width)/2;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imageData.data, canvas.width, canvas.height);
+    const
+    imageData = ctx.getImageData(offset_w, offset_h, QR_scan_width, QR_scan_width),
+    code = jsQR(imageData.data, QR_scan_width, QR_scan_width);
 
     if (code) {
-      alert("QR Code Data: " + code.data);
+        alert("QR Code Data: " + code.data);
     } else {
-      alert("No QR code found.");
+        console.log("No QR code found.");
     }
 
 }
@@ -122,4 +158,6 @@ function export_canvas_context(){
     aDownloadLink.href = image;
     // Get the code to click the download link
     aDownloadLink.click();
-  };
+};
+
+setup();

@@ -17,7 +17,16 @@ video {
     outline: 10px solid red;
 }
 
-#snapshot-trigger {
+div.video_overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 12;
+    box-shadow: 0 0 1000px 40px black;
+}
+
+/*#snapshot-trigger {
     position: fixed;
     width: calc(10rem + 10px);
     height: calc(10rem + 10px);
@@ -31,4 +40,4 @@ video {
     bottom: 20%;
     transform: translate(-50%, 50%);
     z-index: 20;
-}
+}*/
