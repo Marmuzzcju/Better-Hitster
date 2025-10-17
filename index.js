@@ -3,6 +3,10 @@ const
 canvas = document.querySelector('#canvas'),
 video = document.createElement('video'),
 ctx = canvas.getContext('2d'),
+spotify_trigger = document.querySelector('#spotify-trigger'),
+song_control_element = document.querySelector('#song-control-anchor'),
+button_toggle_play = document.querySelector('#toggle-play'),
+song_list = [],
 colors = {
     pink: "rgb(255, 2, 173)",
     sky: "rgb(2, 179, 255)",
@@ -12,7 +16,9 @@ colors = {
 
 let
 QR_scan_width = 400,
-is_searching = false;
+is_searching = false,
+spotify_controler,
+song_is_playing = false;
 
 
 function setup(){
@@ -75,11 +81,53 @@ function search_qr_code(){
     code = jsQR(imageData.data, QR_scan_width, QR_scan_width);
 
     if (code) {
-        alert("QR Code Data: " + code.data);
+        handle_qr_data(code.data);
     } else {
         console.log("No QR code found.");
     }
+}
 
+function handle_qr_data(data){
+    //Spotify link should look as below:
+    //https://open.spotify.com/intl-de/track/58triUtuAX5ZbfyOeogCJ6?si=fc183afc7c754269
+    //what we need is this:           [****************************] part
+    let split = data.split('/');
+    console.log(`QR Data as split:`);
+    console.log(split);
+    if(split[2] == "open.spotify.com"){
+        //spotify link - open track
+        let uri = `spotify:${split[4]/*should be 'track'*/}:${split[5]/*uri tag*/}`;
+        spotify_load_song(uri);
+    }
+}
+
+
+function spotify_load_song(song_uri){
+    spotify_trigger.innerText = song_uri;
+    spotify_trigger.click();
+}
+
+function load_previous_song(){
+    if(song_list.length < 2) return;
+    spotify_load_song(song_list.at(-2));
+}
+
+function toggle_song_play(){
+    if(song_is_playing){
+        spotify_controler.pause();
+        song_is_playing = false;
+        document.querySelectorAll('#song-control-anchor > .toggle-play > *').forEach(e => {e.classList.remove('play');e.classList.add('paused');});
+    } else {
+        spotify_controler.resume();
+        song_is_playing = true;
+        document.querySelectorAll('#song-control-anchor > .toggle-play > *').forEach(e => {e.classList.remove('paused');e.classList.add('play');});
+    }
+    //button_toggle_play.in
+
+}
+
+function activate_controls(){
+    song_control_element.style.display = 'flex';
 }
 
 
@@ -160,4 +208,31 @@ function export_canvas_context(){
     aDownloadLink.click();
 };
 
-setup();
+//setup();
+
+window.onSpotifyIframeApiReady = (IFrameAPI) => {
+    const element = document.getElementById('spotify-iframe');
+    const options = {
+        uri: 'spotify:track:5VUQsLff8A3ruAyCdTxqzg',
+        width: '100%',
+        height: '160',
+    };
+    const callback = (EmbedController) => {
+        const trigger = document.querySelector('#spotify-trigger');
+        trigger.onclick = () => {
+            const song_uri = trigger.innerText;
+            //change trigger text to "spotify:track:[track-uri]" before calling trigger.click();
+            song_list.push(song_uri);
+            EmbedController.loadUri(song_uri);
+            EmbedController.addListener('ready', () => {
+                console.log('The Embed has initialized');
+                spotify_controler = EmbedController;
+                activate_controls();
+            });
+        }
+    };
+    IFrameAPI.createController(element, options, callback);
+    
+};
+//https://open.spotify.com/intl-de/track/3SuxtjdFxY3RIaWyPgtkfk?si=23c1b3ea83364042
+//https://open.spotify.com/intl-de/track/5VUQsLff8A3ruAyCdTxqzg?si=d40ee0089af34787

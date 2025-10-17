@@ -26,6 +26,72 @@ div.video_overlay {
     box-shadow: 0 0 1000px 40px black;
 }
 
+#song-control-anchor {
+    /*display: none;*/
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    height: 5%;
+    transform: translate(-50%, 0);
+    background-color: green;
+}
+
+#song-control-anchor > .return-previous-song {
+    position: absolute;
+    right: 1rem;
+    background-color: black;
+    border-radius: 100%;
+    width: 6rem;
+    height: 6rem;
+}
+#song-control-anchor > .return-previous-song > img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    height: 70%;
+    transform: translate(-50%, -50%);
+}
+
+#song-control-anchor > .toggle-play {
+    position: absolute;
+    left: 1rem;
+    background-color: black;
+    border-radius: 100%;
+    width: 6rem;
+    height: 6rem;
+}
+#song-control-anchor > .toggle-play > * {
+    position: absolute;
+    height: 50%;
+    width: 8%;
+    border-radius: 50% / 9%;
+    background-color: white;
+    transform-origin: center;
+    top: 25%;
+    transition: .7s;
+}
+#song-control-anchor > .toggle-play > .a.play {
+    right: 30%;
+}
+#song-control-anchor > .toggle-play > .b.play {
+    right: 60%; 
+}
+#song-control-anchor > .toggle-play > .a.paused {
+    top: 14%;
+    right: 40%;
+    rotate: 120deg;
+}
+#song-control-anchor > .toggle-play > .b.paused {
+    top: 36%;
+    right: 40%; 
+    rotate: 60deg;
+}
+
+#spotify-trigger {
+    display: none;
+}
+
 /*#snapshot-trigger {
     position: fixed;
     width: calc(10rem + 10px);
