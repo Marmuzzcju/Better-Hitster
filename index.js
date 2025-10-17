@@ -29,6 +29,8 @@ function start_camera(){
     video.setAttribute('playsinline', '');
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
+    /*video.setAttribute('width', '1320px');
+    video.setAttribute('height', '800px');*/
     document.body.appendChild(video);
 
     /* Setting up the constraint */
@@ -61,7 +63,10 @@ function add_video_overlay(){
 
 function repeat_qr_search(search){
     is_searching = search ?? is_searching;
-    if(!is_searching) return;
+    if(!is_searching) {
+        //!temporaly stop camera
+        return;
+    }
     search_qr_code();
     setTimeout(repeat_qr_search, 250);
 }
@@ -89,14 +94,17 @@ function search_qr_code(){
 
 function handle_qr_data(data){
     //Spotify link should look as below:
+    //https://open.spotify.com/intl-de/track/32HXNzxH5Nm8U9Qmk9qxOd?si=6cd667aeafda476c
     //https://open.spotify.com/intl-de/track/58triUtuAX5ZbfyOeogCJ6?si=fc183afc7c754269
     //what we need is this:           [****************************] part
     let split = data.split('/');
     console.log(`QR Data as split:`);
     console.log(split);
     if(split[2] == "open.spotify.com"){
-        //spotify link - open track
-        let uri = `spotify:${split[4]/*should be 'track'*/}:${split[5]/*uri tag*/}`;
+        //spotify link - open track; stop scanning
+        repeat_qr_search(false);
+        let uri = `spotify:${split.at(-2)/*should be 'track'*/}:${split.at(-1).split('?')[0]/*uri tag*/}`;
+        console.log(`Attempting to open: ${uri}`);
         spotify_load_song(uri);
     }
 }
