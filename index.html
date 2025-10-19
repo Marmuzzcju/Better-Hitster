@@ -24,6 +24,23 @@
                 <div class="visual">Scan</div>
             </div>
         </div>
+        <div id="connect-spotify-anchor">
+            <img src="img/connect.svg" class="button" onclick="document.querySelector('#connect-spotify-link').click();">
+            <a id="connect-spotify-link" href="https://accounts.spotify.com/login" target="_blank"></a>
+        </div>
+        <div id="credits-anchor">
+            <div class="button" onclick="toggle_credits_visibility();">C</div>
+            <div class="content">
+                <div class="entry">
+                    <div class="title">Main Project</div>
+                    <div class="text">Marmuzzcju</div>
+                </div>
+                <div class="entry">
+                    <div class="title">Chain Icon</div>
+                    <div class="text">Fonts made from <a href="http://www.onlinewebfonts.com">Web Fonts</a> is licensed by CC BY 4.0</div>
+                </div>
+            </div>
+        </div>
         <video playsinline autoplay muted></video>
         <div id="video-overlay"></div>
         <canvas class="hidden" id="canvas" width="400" height="400" style="outline: 1px solid black;"></canvas>

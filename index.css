@@ -157,6 +157,80 @@ div.video_overlay {
     rotate: 60deg;
 }
 
+#connect-spotify-anchor {
+    position: fixed;
+    /*border-radius: 100%;
+    width: 2rem;
+    height: 2rem;
+    color: white;
+    text-align: center;
+    line-height: 2rem;
+    box-shadow: black 0 0 5px;
+    cursor: pointer;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+    */
+    top: 5%;
+    right: 4%;
+}
+#connect-spotify-anchor .button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    /*background-color: red;*/
+    border-radius: 15%;
+    width: 5rem;
+    height: 5rem;
+}
+
+#credits-anchor {
+    position: fixed;
+    bottom: 3%;
+    right: 3%;
+}
+#credits-anchor .button {
+    position: absolute;
+    background-color: black;
+    border-radius: 100%;
+    width: 2rem;
+    height: 2rem;
+    color: white;
+    text-align: center;
+    line-height: 2rem;
+    box-shadow: black 0 0 5px;
+    cursor: pointer;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+}
+#credits-anchor .content {
+    font-size: 1rem;
+    padding: 0.1rem;
+    overflow: hidden;
+    text-align: center;
+    width: 0px;
+    height: 0px;
+    background-color: rgba(0,0,0,0.3);
+    border: 1px solid black;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    transform-origin: bottom right;
+    transition: 1s;
+}
+#credits-anchor .content.visible {
+    width: 13rem;
+    height: 7.5rem;
+}
+#credits-anchor .content .title {
+    font-weight: bold;
+}
+#credits-anchor .content .entry:not(:nth-child(1)) {
+    /*background-color: red;*/
+    margin-top: 1rem;
+}
+
 #spotify-trigger {
     display: none;
 }

@@ -31,6 +31,12 @@ function show_loading(visible = true){
     loading_overlay.style.display = visible ? 'block' : 'none';
 }
 
+function toggle_credits_visibility(){
+    const c = document.querySelector('#credits-anchor > .content');
+    if(c.classList.contains('visible')) c.classList.remove('visible');
+    else c.classList.add('visible');
+}
+
 function start_qr_search(){
     song_control_element.style.display = 'none';
     search_cycle = 0;
@@ -143,7 +149,10 @@ function handle_qr_data(data){
 function handle_spotify_ready(){
     song_control_element.style.display = 'block';
     activate_controls();
-    first_song_loaded = true;
+    if(!first_song_loaded){
+        first_song_loaded = true;    
+        //check_spotify_connect();
+    }
     show_loading(false);
 }
 
@@ -171,7 +180,6 @@ function toggle_song_play(){
         document.querySelectorAll('#song-control-anchor > .toggle-play > *').forEach(e => {e.classList.remove('paused');e.classList.add('play');});
     }
     //button_toggle_play.in
-
 }
 
 function activate_controls(){
@@ -258,6 +266,12 @@ function export_canvas_context(){
     aDownloadLink.click();
 };
 
+
+function check_spotify_connect(){
+    let progress_bar = document.querySelectorAll('.ProgressBar_progressBarContainer__glVHh');
+    if(progress_bar.length < 1) alert('NO Connection');
+    else alert('Connection Exists!');
+}
 
 window.onSpotifyIframeApiReady = (IFrameAPI) => {
     const element = document.getElementById('spotify-iframe');
