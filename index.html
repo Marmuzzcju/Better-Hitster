@@ -8,19 +8,28 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div>
-        Nicht viel zu sehen hier...
+    <div id="loading-overlay">
+        <div class="content">Loading...</div>
+        <div class="content spinner"></div>
     </div>
-    <div id="song-control-anchor">
-        <div class="return-previous-song" onclick="load_previous_song();"><img src="img/arrow-back.svg"></div>
-        <div class="toggle-play" onclick="toggle_song_play();">
-            <div class="a paused"></div>
-            <div class="b paused"></div>
+    <div id="overlay">
+        <div id="song-control-anchor">
+            <div class="button return-previous-song solo" onclick="load_previous_song();"><img src="img/arrow-back.svg"></div>
+            <div class="button toggle-play" onclick="toggle_song_play();">
+                <div class="a paused"></div>
+                <div class="b paused"></div>
+            </div>
+            <div class="button qr-scan-trigger solo" onclick="start_qr_search();">
+                <div class="visual child"></div>
+                <div class="visual">Scan</div>
+            </div>
         </div>
+        <video playsinline autoplay muted></video>
+        <div id="video-overlay"></div>
+        <canvas class="hidden" id="canvas" width="400" height="400" style="outline: 1px solid black;"></canvas>
     </div>
-    <canvas id="canvas" width="400" height="400" style="outline: 1px solid black;"></canvas>
-    <div id="spotify-trigger"></div>
-    <div id="spotify-iframe"></div>
+    <div class="hidden" id="spotify-trigger"></div>
+    <div class="hidden" id="spotify-iframe"></div>
     <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
     <script src="index.js"></script>

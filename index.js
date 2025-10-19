@@ -1,7 +1,9 @@
 console.log('Hello World!');
 const 
 canvas = document.querySelector('#canvas'),
-video = document.createElement('video'),
+loading_overlay = document.querySelector('#loading-overlay'),
+video = document.querySelector('video'),
+video_overlay = document.querySelector('#video-overlay');
 ctx = canvas.getContext('2d'),
 spotify_trigger = document.querySelector('#spotify-trigger'),
 song_control_element = document.querySelector('#song-control-anchor'),
@@ -18,47 +20,71 @@ let
 QR_scan_width = 400,
 is_searching = false,
 spotify_controler,
+camera_stream,
+first_song_loaded = false,
+search_cycle = 0,
 song_is_playing = false;
 
 
-function setup(){
-    start_camera();
+
+function show_loading(visible = true){
+    loading_overlay.style.display = visible ? 'block' : 'none';
 }
 
-function start_camera(){
+function start_qr_search(){
+    song_control_element.style.display = 'none';
+    search_cycle = 0;
+    if(song_is_playing) toggle_song_play();
+    if(!first_song_loaded) start_camera();
+    else {
+        pause_camera(false);
+        setTimeout(repeat_qr_search, 250, true);
+    }
+}
+
+function start_camera(){/*
     video.setAttribute('playsinline', '');
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
-    /*video.setAttribute('width', '1320px');
-    video.setAttribute('height', '800px');*/
-    document.body.appendChild(video);
+    /*video.setAttribute('width', '320px');
+    video.setAttribute('height', '800px');/
+    document.body.appendChild(video);*/
 
     /* Setting up the constraint */
     let facingMode = "environment"; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
     let constraints = {
-    audio: false,
-    video: {
-    facingMode: facingMode
-    }
+        audio: false,
+        video: {
+            facingMode: facingMode
+        }
     };
 
     /* Stream it to video element */
     navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
+        camera_stream = stream;
         video.srcObject = stream;
         add_video_overlay();
         setTimeout(repeat_qr_search, 250, true);
     });
 }
 
+function pause_camera(pause = true){
+    const 
+    videoTrack = camera_stream.getVideoTracks()[0],
+    display_property = pause ? 'none' : 'inline';
+    videoTrack.enabled = !pause;
+    video.style.display = display_property;
+    video_overlay.style.display = display_property;
+}
+
 function add_video_overlay(){
     const v_w = video.videoWidth, v_h = video.videoHeight;
     QR_scan_width = (v_h >= QR_scan_width) == (v_w >= QR_scan_width) ? QR_scan_width : (v_h > v_w ? v_w : v_h),
-    overlay = document.createElement('div');
-    overlay.classList.add('video_overlay');
-    overlay.style.width = `${QR_scan_width}px`;
-    overlay.style.height = `${QR_scan_width}px`;
+    video_overlay.classList.add('video_overlay');
+    video_overlay.style.width = `${QR_scan_width}px`;
+    video_overlay.style.height = `${QR_scan_width}px`;
     console.log(`QR-scan width: ${QR_scan_width}`);
-    document.body.appendChild(overlay);
+    //document.querySelector('#overlay').appendChild(video_overlay);
 }
 
 function repeat_qr_search(search){
@@ -68,11 +94,13 @@ function repeat_qr_search(search){
         return;
     }
     search_qr_code();
-    setTimeout(repeat_qr_search, 250);
+    setTimeout(repeat_qr_search, 340);
 }
 
 
 function search_qr_code(){
+    search_cycle++;
+    if(search_cycle < 3) return;
     let
     v_w = video.videoWidth, v_h = video.videoHeight,
     offset_w = (v_w - QR_scan_width)/2,
@@ -96,13 +124,15 @@ function handle_qr_data(data){
     //Spotify link should look as below:
     //https://open.spotify.com/intl-de/track/32HXNzxH5Nm8U9Qmk9qxOd?si=6cd667aeafda476c
     //https://open.spotify.com/intl-de/track/58triUtuAX5ZbfyOeogCJ6?si=fc183afc7c754269
-    //what we need is this:           [****************************] part
+    //what we need is this part:      [****************************]
     let split = data.split('/');
     console.log(`QR Data as split:`);
     console.log(split);
     if(split[2] == "open.spotify.com"){
         //spotify link - open track; stop scanning
         repeat_qr_search(false);
+        pause_camera(true);
+        show_loading();
         let uri = `spotify:${split.at(-2)/*should be 'track'*/}:${split.at(-1).split('?')[0]/*uri tag*/}`;
         console.log(`Attempting to open: ${uri}`);
         spotify_load_song(uri);
@@ -110,14 +140,24 @@ function handle_qr_data(data){
 }
 
 
+function handle_spotify_ready(){
+    song_control_element.style.display = 'block';
+    activate_controls();
+    first_song_loaded = true;
+    show_loading(false);
+}
+
 function spotify_load_song(song_uri){
+    if(song_is_playing) toggle_song_play();
     spotify_trigger.innerText = song_uri;
     spotify_trigger.click();
 }
 
 function load_previous_song(){
     if(song_list.length < 2) return;
-    spotify_load_song(song_list.at(-2));
+    let song_uri = song_list.at(-2);
+    song_list.splice(-2, 2);
+    spotify_load_song(song_uri);
 }
 
 function toggle_song_play(){
@@ -135,7 +175,9 @@ function toggle_song_play(){
 }
 
 function activate_controls(){
-    song_control_element.style.display = 'flex';
+    for(const child of song_control_element.children){
+        child.classList.remove('solo');
+    };
 }
 
 
@@ -216,17 +258,17 @@ function export_canvas_context(){
     aDownloadLink.click();
 };
 
-//setup();
 
 window.onSpotifyIframeApiReady = (IFrameAPI) => {
     const element = document.getElementById('spotify-iframe');
     const options = {
+        //load default song to get API ready
         uri: 'spotify:track:5VUQsLff8A3ruAyCdTxqzg',
         width: '100%',
         height: '160',
     };
     const callback = (EmbedController) => {
-        const trigger = document.querySelector('#spotify-trigger');
+        const trigger = document.querySelector('#spotify-trigger');//==spotify_trigger
         trigger.onclick = () => {
             const song_uri = trigger.innerText;
             //change trigger text to "spotify:track:[track-uri]" before calling trigger.click();
@@ -235,11 +277,13 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
             EmbedController.addListener('ready', () => {
                 console.log('The Embed has initialized');
                 spotify_controler = EmbedController;
-                activate_controls();
+                handle_spotify_ready();
             });
         }
     };
     IFrameAPI.createController(element, options, callback);
+    console.log('MAYBE READY???');
+    show_loading(false);
     
 };
 //https://open.spotify.com/intl-de/track/3SuxtjdFxY3RIaWyPgtkfk?si=23c1b3ea83364042

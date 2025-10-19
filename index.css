@@ -14,7 +14,43 @@ video {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
-    outline: 10px solid red;
+    /*outline: 10px solid red;*/
+}
+
+.hidden {
+    display: none;
+}
+
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+#loading-overlay .content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: aliceblue;
+    font-size: 6rem;
+}
+#loading-overlay .content.spinner {
+    width: 6rem;
+    height: 6rem;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: cornflowerblue;
+    z-index: 100;
 }
 
 div.video_overlay {
@@ -29,20 +65,28 @@ div.video_overlay {
 #song-control-anchor {
     /*display: none;*/
     position: fixed;
-    top: 5%;
+    bottom: 10rem;
     left: 50%;
     height: 5%;
     transform: translate(-50%, 0);
     background-color: green;
 }
 
-#song-control-anchor > .return-previous-song {
+#song-control-anchor .button {
     position: absolute;
-    right: 1rem;
     background-color: black;
     border-radius: 100%;
     width: 6rem;
     height: 6rem;
+    box-shadow: black 0 0 5px;
+    cursor: pointer;/*only affects pc devices*/
+}
+#song-control-anchor > .return-previous-song {
+    right: 4rem;
+    transition: 1s;
+}
+#song-control-anchor > .return-previous-song.solo {
+    right: -3rem;
 }
 #song-control-anchor > .return-previous-song > img {
     position: absolute;
@@ -53,13 +97,38 @@ div.video_overlay {
     transform: translate(-50%, -50%);
 }
 
-#song-control-anchor > .toggle-play {
+#song-control-anchor > .qr-scan-trigger {
+    left: 4rem;
+    transition: 1s;
+}
+#song-control-anchor > .qr-scan-trigger.solo {
+    left: -3rem;
+}
+#song-control-anchor > .qr-scan-trigger .visual {
     position: absolute;
-    left: 1rem;
-    background-color: black;
-    border-radius: 100%;
-    width: 6rem;
-    height: 6rem;
+    background-color: inherit;
+    color: white;
+    text-align: center;
+    line-height: 3rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 3rem;
+    height: 3rem;
+}
+#song-control-anchor > .qr-scan-trigger .visual.child {
+    width: 1rem;
+    height: 1rem;
+    box-shadow: 
+    white 1.1rem 1.1rem,
+    white -1.1rem 1.1rem,
+    white 1.1rem -1.1rem,
+    white -1.1rem -1.1rem;
+}
+
+#song-control-anchor > .toggle-play {
+    left: 0;
+    transform: translate(-50%, 0);
 }
 #song-control-anchor > .toggle-play > * {
     position: absolute;
