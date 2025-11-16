@@ -1,5 +1,6 @@
 console.log('Hello World!');
-const 
+const
+build_version = 1557161125,
 hidden_canvas = document.querySelector('#hidden-canvas'),
 background_canvas = document.querySelector('#background-canvas'),
 loading_overlay = document.querySelector('#loading-overlay'),
