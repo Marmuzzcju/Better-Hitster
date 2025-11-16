@@ -14,6 +14,7 @@
     </div>
     <div id="overlay">
         <div class="background" onclick="toggle_setting_visibility(0, false);toggle_element_visibility(0, false);"></div>
+        <canvas id="background-canvas" width="400" height="400"></canvas>
         <div id="song-control-anchor">
             <div class="button return-previous-song solo" onclick="load_previous_song();"><img src="img/arrow-back.svg"></div>
             <div class="button toggle-play" onclick="toggle_song_play();">
@@ -27,7 +28,7 @@
         </div>
         <a id="connect-spotify-link" href="https://accounts.spotify.com/login" target="_blank"></a>
         <div id="settings-anchor">
-            <img src="img/cogwheel.svg" class="button" onclick="this.classList.toggle('visible');toggle_setting_visibility(0, false);toggle_element_visibility('settings');"></img>
+            <img src="img/cogwheel.svg" id="menu-cogwheel" class="button" onclick="toggle_setting_visibility(0, false);toggle_element_visibility('settings');"></img>
             <div class="menu">
                 <div class="title">Settings</div>
                 <img src="img/close.svg" class="exit" onclick="toggle_setting_visibility(0, false);toggle_element_visibility('settings', false);"></img>
@@ -59,7 +60,6 @@
                 </div>
             </div>
         </div>
-        <canvas id="background-canvas" width="400" height="400"></canvas>
         <video playsinline autoplay muted></video>
         <div id="video-overlay"></div>
         <canvas class="hidden" id="hidden-canvas" width="400" height="400" style="outline: 1px solid black;"></canvas>

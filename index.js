@@ -38,10 +38,11 @@ song_is_playing = false;
 //setup
 const 
 max_width = window.innerWidth,
-max_height = window.innerHeight;
-background_canvas.width = max_width;
-background_canvas.height = max_width;
-draw_logo(b_ctx, max_width * 0.9, max_width * 0.05, 1);
+max_height = window.innerHeight,
+min = Math.min(max_height, max_width);
+background_canvas.width = min;
+background_canvas.height = min;
+draw_logo(b_ctx, min * 0.9, min * 0.05, 1);
 
 
 function show_loading(visible = true){
@@ -53,7 +54,7 @@ function toggle_element_visibility(target, may_show = true){
         const targets = ['settings'];
         targets.forEach(t => {toggle_element_visibility(t, may_show)});
         return;
-    }
+    } else if(target == 'settings') document.querySelector('#menu-cogwheel').classList.toggle('visible');
     const c = document.querySelector(`#${target}-anchor > div`);
     if(c.classList.contains('visible')) c.classList.remove('visible');
     else if(may_show) c.classList.add('visible');
