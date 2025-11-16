@@ -1,14 +1,21 @@
 console.log('Hello World!');
 const 
-canvas = document.querySelector('#canvas'),
+hidden_canvas = document.querySelector('#hidden-canvas'),
+background_canvas = document.querySelector('#background-canvas'),
 loading_overlay = document.querySelector('#loading-overlay'),
 video = document.querySelector('video'),
 video_overlay = document.querySelector('#video-overlay');
-ctx = canvas.getContext('2d'),
+h_ctx = hidden_canvas.getContext('2d'),
+b_ctx = background_canvas.getContext('2d'),
 spotify_trigger = document.querySelector('#spotify-trigger'),
 song_control_element = document.querySelector('#song-control-anchor'),
 button_toggle_play = document.querySelector('#toggle-play'),
 song_list = [],
+user_settings = {
+    autoplay: false,
+},
+critical_error_log_style = `background-color: red;padding: 2px;font-weight: bolder;font-size: large;`,
+non_critical_error_log_style = `background-color: rgba(255,0,0,0.7);padding: 1px;font-weight: bold;`,
 colors = {
     pink: "rgb(255, 2, 173)",
     sky: "rgb(2, 179, 255)",
@@ -23,18 +30,59 @@ spotify_controler,
 camera_stream,
 first_song_loaded = false,
 search_cycle = 0,
+previous_song_load = 0,
+current_song_load = 0,
 song_is_playing = false;
 
+
+//setup
+const 
+max_width = window.innerWidth,
+max_height = window.innerHeight;
+background_canvas.width = max_width;
+background_canvas.height = max_width;
+draw_logo(b_ctx, max_width * 0.9, max_width * 0.05, 1);
 
 
 function show_loading(visible = true){
     loading_overlay.style.display = visible ? 'block' : 'none';
 }
 
-function toggle_credits_visibility(){
-    const c = document.querySelector('#credits-anchor > .content');
+function toggle_element_visibility(target, may_show = true){
+    if(!target){
+        const targets = ['settings'];
+        targets.forEach(t => {toggle_element_visibility(t, may_show)});
+        return;
+    }
+    const c = document.querySelector(`#${target}-anchor > div`);
     if(c.classList.contains('visible')) c.classList.remove('visible');
-    else c.classList.add('visible');
+    else if(may_show) c.classList.add('visible');
+}
+
+function toggle_setting_visibility(target, may_show = true){
+    if(!target){
+        const targets = ['credits', 'help'];
+        targets.forEach(t => {toggle_setting_visibility(t, may_show)});
+        return;
+    }
+    const c = document.querySelector(`#settings-anchor > div .${target}`);
+    if(c.classList.contains('visible')) c.classList.remove('visible');
+    else if(may_show) c.classList.add('visible');
+}
+
+function toggle_setting(setting){
+    if(user_settings?.[setting] === undefined){
+        console.log(`%cError: Trying to modify "${setting}" while setting does not exist!!`, non_critical_error_log_style);
+        return;
+    }
+    let was_enabled = !user_settings[setting];
+    user_settings[setting] = was_enabled;
+    switch(setting){
+        case 'autoplay':{
+            document.querySelector('#user-settings-autoplay').innerText = `Autoplay: ${was_enabled ? 'Enabled' : 'Disabled'}`;
+            break;
+        }
+    }
 }
 
 function start_qr_search(){
@@ -111,12 +159,12 @@ function search_qr_code(){
     v_w = video.videoWidth, v_h = video.videoHeight,
     offset_w = (v_w - QR_scan_width)/2,
     offset_h = (v_h - QR_scan_width)/2;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    hidden_canvas.width = video.videoWidth;
+    hidden_canvas.height = video.videoHeight;
+    h_ctx.drawImage(video, 0, 0, hidden_canvas.width, hidden_canvas.height);
     
     const
-    imageData = ctx.getImageData(offset_w, offset_h, QR_scan_width, QR_scan_width),
+    imageData = h_ctx.getImageData(offset_w, offset_h, QR_scan_width, QR_scan_width),
     code = jsQR(imageData.data, QR_scan_width, QR_scan_width);
 
     if (code) {
@@ -147,18 +195,22 @@ function handle_qr_data(data){
 
 
 function handle_spotify_ready(){
+    if(current_song_load == previous_song_load) return;
     song_control_element.style.display = 'block';
-    activate_controls();
     if(!first_song_loaded){
+        activate_controls();
         first_song_loaded = true;    
         //check_spotify_connect();
     }
     show_loading(false);
+    if(user_settings.autoplay) toggle_song_play();
+    previous_song_load++;
 }
 
 function spotify_load_song(song_uri){
     if(song_is_playing) toggle_song_play();
     spotify_trigger.innerText = song_uri;
+    current_song_load++;
     spotify_trigger.click();
 }
 
@@ -170,6 +222,7 @@ function load_previous_song(){
 }
 
 function toggle_song_play(){
+    console.log(`%cTOGGLING PLAY BUTTON`, critical_error_log_style);
     if(song_is_playing){
         spotify_controler.pause();
         song_is_playing = false;
@@ -189,73 +242,86 @@ function activate_controls(){
 }
 
 
-function draw_logo(){
-    const unit = 11;
-    let x = 404 - 2*unit, r = x - 200;
+function draw_logo(ctx, width = 400, offset = 0, opacity  = 1){
+    const
+    radi_offset = width/36.364,
+    max_radius  = width / 2,
+    current_alpha = ctx.globalAlpha;
+    let r = (max_radius - radi_offset)*0.965;
+
+    ctx.globalAlpha = opacity;
+
+    //black background circle
+    ctx.shadowColor = 'black';
+    ctx.shadowBlur = offset;
+    ctx.fillStyle = 'black';
     ctx.beginPath();
-    ctx.arc(200, 200, 200, 0, Math.PI*2, false);
+    ctx.arc(max_radius + offset, max_radius + offset, max_radius, 0, Math.PI*2, false);
     ctx.fill();
+    ctx.shadowBlur = 0;
+
+    //Strikes
     ctx.strokeStyle = colors.pink;
-    ctx.lineWidth = 7;
+    ctx.lineWidth = width/57;
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*1.49, Math.PI/16*12, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*1.49, Math.PI/16*12, false);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*17.47, Math.PI/16*28, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*17.47, Math.PI/16*28, false);
     ctx.stroke();
-    x -= 2*unit,
-    r -= 2*unit;
+    r -= 2*radi_offset;
     ctx.strokeStyle = colors.sky;
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*08, Math.PI/16*14.3, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*08, Math.PI/16*14.3, false);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*17.7, Math.PI/16*21, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*17.7, Math.PI/16*21, false);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*25, Math.PI/16*28, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*25, Math.PI/16*28, false);
     ctx.stroke();
-    x -= 2*unit,
-    r -= 2*unit;
+    r -= 2*radi_offset;
     ctx.strokeStyle = colors.yellow;
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*02, Math.PI/16*14, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*02, Math.PI/16*14, false);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*18, Math.PI/16*30, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*18, Math.PI/16*30, false);
     ctx.stroke();
-    x -= 2*unit,
-    r -= 2*unit;
+    r -= 2*radi_offset;
     ctx.strokeStyle = colors.pink;
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*05, Math.PI/16*13.6, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*05, Math.PI/16*13.6, false);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*18.4, Math.PI/16*27, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*18.4, Math.PI/16*27, false);
     ctx.stroke();
-    x -= 2*unit,
-    r -= 2*unit;
+    r -= 2*radi_offset;
     ctx.strokeStyle = colors.redish;
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*03, Math.PI/16*10, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*03, Math.PI/16*10, false);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(200, 200, r, Math.PI/16*22, Math.PI/16*28.88, false);
+    ctx.arc(max_radius + offset, max_radius + offset, r, Math.PI/16*22, Math.PI/16*28.88, false);
     ctx.stroke();
 
+    //text
     ctx.shadowColor = colors.pink;
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = width/50;
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `${200/1.9}px Abel`;
-    ctx.fillText('J E S U S', 200, 200*1.04);
+    ctx.font = `${max_radius/1.9}px Abel`;
+    ctx.fillText('J E S U S', max_radius + offset, max_radius*1.04 + offset);
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = current_alpha;
 }
 
 
-function export_canvas_context(){
+function export_hidden_canvas_context(){
     // Convert the canvas to data
-    let image = canvas.toDataURL();
+    let image = hidden_canvas.toDataURL();
     // Create a link
     let aDownloadLink = document.createElement("a");
     // Add the name of the file to the link
@@ -289,7 +355,7 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
             song_list.push(song_uri);
             EmbedController.loadUri(song_uri);
             EmbedController.addListener('ready', () => {
-                console.log('The Embed has initialized');
+                console.log('%cThe Embed has initialized', 'background:green;');
                 spotify_controler = EmbedController;
                 handle_spotify_ready();
             });

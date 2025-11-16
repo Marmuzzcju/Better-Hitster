@@ -44,13 +44,15 @@ video {
 }
 
 #overlay {
+    z-index: 100;
+}
+#overlay .background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: cornflowerblue;
-    z-index: 100;
 }
 
 div.video_overlay {
@@ -157,6 +159,152 @@ div.video_overlay {
     rotate: 60deg;
 }
 
+
+.corner {
+    display: none !important;
+}
+
+#settings-anchor {
+    position: fixed;
+    bottom: 3rem;
+    left: 3rem;
+    height: 0;
+    width: 0;
+    z-index: 20;
+}
+#settings-anchor .button {
+    position: absolute;
+    background-color: black;
+    border-radius: 100%;
+    width: 3rem;
+    height: 3rem;
+    box-shadow: black 0 0 5px 0.5rem, black 0 0 0 0.5rem;
+    cursor: pointer;/*only affects pc devices*/
+    left: -1.5rem;
+    top: -1.5rem;
+    /*color: white;
+    text-align: center;
+    line-height: 4rem;
+    font-weight: bolder;
+    font-size: 2.5rem;*/
+    transition: 1s;
+}
+#settings-anchor .button.visible {
+    rotate: 90deg;
+}
+#settings-anchor .menu {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(170, 170, 50, 1);
+    height: 0;
+    height: calc-size(auto, size * 0);
+    width: 0rem;
+    border-radius: .5rem;
+    overflow: hidden;
+    transition: 1s;
+    text-align: center;
+}
+#settings-anchor .menu.visible {
+    width: calc(calc(100vw - 6rem) * 1);
+    height: auto;
+    height: calc-size(auto, size * 1 + 1rem);
+}
+#settings-anchor > .menu > .title {
+    font-size: 2rem;
+    padding: 0.2rem;
+}
+#settings-anchor > .menu > .exit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 1rem;
+    width: 1rem;
+    padding: 0.5rem;
+}
+#settings-anchor .entry {
+    outline: 1px solid white;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+#settings-anchor .entry .content {
+    transition: height .5s;
+    height: 0;
+    height: calc-size(auto, size * 0);
+}
+#settings-anchor .entry .content.visible {
+    height: auto;
+    height: calc-size(auto, size * 1);
+}
+#settings-anchor .entry .title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    background: black;
+    color: white;
+    margin: 0 18%;
+    border-radius: 7rem;
+    text-wrap: nowrap;
+}
+#settings-anchor .entry .title img {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+#settings-anchor .entry .sub-title {
+    font-weight: bold;
+}
+
+#help-anchor {
+    position: fixed;
+    top: 4%;
+    left: 4%;
+}
+#help-anchor .button {
+    position: absolute;
+    background-color: black;
+    border-radius: 100%;
+    width: 4rem;
+    height: 4rem;
+    box-shadow: black 0 0 5px;
+    cursor: pointer;/*only affects pc devices*/
+    left: 0;
+    top: 0;
+    color: white;
+    text-align: center;
+    line-height: 4rem;
+    font-weight: bolder;
+    font-size: 2.5rem;
+}
+#help-anchor .content {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    width: 0rem;
+    height: 0rem;
+    background: red;
+    overflow: hidden;
+    transition: 2s ease-out;
+}
+#help-anchor .content.visible {
+    top: -1rem;
+    left: -1rem;
+    width: 20rem;
+    height: 20rem;
+}
+#help-anchor .content .exit {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1.2rem;
+    text-align: center;
+    line-height: 1.5rem;
+    outline: 1px solid black;
+    font-weight: bolder;
+    border-radius: 40%;
+    cursor: pointer;
+}
+
 #connect-spotify-anchor {
     position: fixed;
     /*border-radius: 100%;
@@ -171,17 +319,28 @@ div.video_overlay {
     right: 0;
     z-index: 10;
     */
-    top: 5%;
+    top: 4%;
     right: 4%;
 }
 #connect-spotify-anchor .button {
     position: absolute;
-    top: 0;
+    background-color: black;
+    border-radius: 100%;
+    width: 4rem;
+    height: 4rem;
+    box-shadow: black 0 0 5px;
+    cursor: pointer;/*only affects pc devices*/
     right: 0;
+    top: 0;
+}
+#connect-spotify-anchor .button > img {
+    position: absolute;
+    top: .7rem;
+    right: .7rem;
     /*background-color: red;*/
     border-radius: 15%;
-    width: 5rem;
-    height: 5rem;
+    width: 2.6rem;
+    height: 2.6rem;
 }
 
 #credits-anchor {
@@ -233,6 +392,15 @@ div.video_overlay {
 
 #spotify-trigger {
     display: none;
+}
+
+#background-canvas {
+    position: fixed;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+    /*outline: 1px solid red;*/
+    pointer-events: none;
 }
 
 /*#snapshot-trigger {

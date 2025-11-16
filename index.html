@@ -13,6 +13,7 @@
         <div class="content spinner"></div>
     </div>
     <div id="overlay">
+        <div class="background" onclick="toggle_setting_visibility(0, false);toggle_element_visibility(0, false);"></div>
         <div id="song-control-anchor">
             <div class="button return-previous-song solo" onclick="load_previous_song();"><img src="img/arrow-back.svg"></div>
             <div class="button toggle-play" onclick="toggle_song_play();">
@@ -24,26 +25,44 @@
                 <div class="visual">Scan</div>
             </div>
         </div>
-        <div id="connect-spotify-anchor">
-            <img src="img/connect.svg" class="button" onclick="document.querySelector('#connect-spotify-link').click();">
-            <a id="connect-spotify-link" href="https://accounts.spotify.com/login" target="_blank"></a>
-        </div>
-        <div id="credits-anchor">
-            <div class="button" onclick="toggle_credits_visibility();">C</div>
-            <div class="content">
-                <div class="entry">
-                    <div class="title">Main Project</div>
-                    <div class="text">Marmuzzcju</div>
+        <a id="connect-spotify-link" href="https://accounts.spotify.com/login" target="_blank"></a>
+        <div id="settings-anchor">
+            <img src="img/cogwheel.svg" class="button" onclick="this.classList.toggle('visible');toggle_setting_visibility(0, false);toggle_element_visibility('settings');"></img>
+            <div class="menu">
+                <div class="title">Settings</div>
+                <img src="img/close.svg" class="exit" onclick="toggle_setting_visibility(0, false);toggle_element_visibility('settings', false);"></img>
+                <div class="entry hidden">
+                    <div class="title" onclick="toggle_setting_visibility('credits')">Credits</div>
+                    <div class="content credits">
+                        <div class="sub-title">Main Project</div>
+                        <div class="text">Marmuzzcju</div>
+                        <!--<div class="sub-title">Chain Icon</div>
+                        <div class="text">Fonts made from <a href="http://www.onlinewebfonts.com">Web Fonts</a> is licensed by CC BY 4.0</div>-->
+                    </div>
                 </div>
                 <div class="entry">
-                    <div class="title">Chain Icon</div>
-                    <div class="text">Fonts made from <a href="http://www.onlinewebfonts.com">Web Fonts</a> is licensed by CC BY 4.0</div>
+                    <div class="title" onclick="toggle_setting_visibility('help')">Help</div>
+                    <div class="content help">
+                        <div class="sub-title">Usage</div>
+                        <div class="text">Press the "scan" button and allow camera usage if requested. Next, you can scan any qr code, containing a spotify link by aranging it inside the highlighted area of the camera live feed. Doing so will open the song in the background. You can then use the back arrow button to load the previous song, the play button to start/stop the current song or the scan button to scan a different code.</div>
+                        <div class="sub-title">Connect Spotify</div>
+                        <div class="text">Since this website is using spotify as the song provider, you need to be connected to spoitfy in order to play the full songs. If you do not have a premium account, or are not connected to it, you will only be able to listen to excerpts of the songs.</div>
+                        <div class="sub-title">It's not working</div>
+                        <div class="text">If you experience bugs, the site is not working at all or you have any suggestions, feel free to contact me via marmuzzcju@gmail.com</div>
+                    </div>
+                </div>
+                <div class="entry">
+                    <div class="title" onclick="document.querySelector('#connect-spotify-link').click();">Connect Spotify<!-- <img src="img/connect.svg">--></div>
+                </div>
+                <div class="entry">
+                    <div class="title" id="user-settings-autoplay" onclick="toggle_setting('autoplay');">Autoplay: Disabled</div>
                 </div>
             </div>
         </div>
+        <canvas id="background-canvas" width="400" height="400"></canvas>
         <video playsinline autoplay muted></video>
         <div id="video-overlay"></div>
-        <canvas class="hidden" id="canvas" width="400" height="400" style="outline: 1px solid black;"></canvas>
+        <canvas class="hidden" id="hidden-canvas" width="400" height="400" style="outline: 1px solid black;"></canvas>
     </div>
     <div class="hidden" id="spotify-trigger"></div>
     <div class="hidden" id="spotify-iframe"></div>
