@@ -1,6 +1,6 @@
 console.log('Hello World!');
 const
-build_version = 1723161125,
+build_version = 2124031225,
 hidden_canvas = document.querySelector('#hidden-canvas'),
 background_canvas = document.querySelector('#background-canvas'),
 loading_overlay = document.querySelector('#loading-overlay'),
@@ -39,7 +39,7 @@ song_is_playing = false;
 //setup
 const 
 max_width = window.innerWidth,
-max_height = window.innerHeight,
+max_height = window.innerHeight * 0.65,
 min = Math.min(max_height, max_width);
 background_canvas.width = min;
 background_canvas.height = min;

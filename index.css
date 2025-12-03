@@ -3,6 +3,12 @@
     src: url('Abel-Regular.ttf');
 }
 
+@property --test {
+  syntax: '<number>';
+  initial-value: 1;
+  inherits: false;
+}
+
 body {
     background-color: cornflowerblue;
     font-family: Abel;
@@ -17,8 +23,17 @@ video {
     /*outline: 10px solid red;*/
 }
 
+iframe {
+    position: fixed;
+    z-index: 99999;
+}
+
 .hidden {
     display: none;
+}
+
+.c-pointer {
+    cursor: pointer;
 }
 
 #loading-overlay {
@@ -397,7 +412,7 @@ div.video_overlay {
 #background-canvas {
     position: fixed;
     left: 50%;
-    top: 40%;
+    top: 36%;
     transform: translate(-50%, -50%);
     /*outline: 1px solid red;*/
     pointer-events: none;

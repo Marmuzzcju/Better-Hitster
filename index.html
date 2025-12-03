@@ -31,9 +31,9 @@
             <img src="img/cogwheel.svg" id="menu-cogwheel" class="button" onclick="toggle_setting_visibility(0, false);toggle_element_visibility('settings');"></img>
             <div class="menu">
                 <div class="title">Settings</div>
-                <img src="img/close.svg" class="exit" onclick="toggle_setting_visibility(0, false);toggle_element_visibility('settings', false);"></img>
+                <img src="img/close.svg" class="exit c-pointer" onclick="toggle_setting_visibility(0, false);toggle_element_visibility('settings', false);"></img>
                 <div class="entry hidden">
-                    <div class="title" onclick="toggle_setting_visibility('credits')">Credits</div>
+                    <div class="title c-pointer" onclick="toggle_setting_visibility('credits')">Credits</div>
                     <div class="content credits">
                         <div class="sub-title">Main Project</div>
                         <div class="text">Marmuzzcju</div>
@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div class="entry">
-                    <div class="title" onclick="toggle_setting_visibility('help')">Help</div>
+                    <div class="title c-pointer" onclick="toggle_setting_visibility('help')">Help</div>
                     <div class="content help">
                         <div class="sub-title">Usage</div>
                         <div class="text">Press the "scan" button and allow camera usage if requested. Next, you can scan any qr code, containing a spotify link by aranging it inside the highlighted area of the camera live feed. Doing so will open the song in the background. You can then use the back arrow button to load the previous song, the play button to start/stop the current song or the scan button to scan a different code.</div>
@@ -53,10 +53,10 @@
                     </div>
                 </div>
                 <div class="entry">
-                    <div class="title" onclick="document.querySelector('#connect-spotify-link').click();">Connect Spotify<!-- <img src="img/connect.svg">--></div>
+                    <div class="title c-pointer" onclick="document.querySelector('#connect-spotify-link').click();">Connect Spotify<!-- <img src="img/connect.svg">--></div>
                 </div>
                 <div class="entry">
-                    <div class="title" id="user-settings-autoplay" onclick="toggle_setting('autoplay');">Autoplay: Disabled</div>
+                    <div class="title c-pointer" id="user-settings-autoplay" onclick="toggle_setting('autoplay');">Autoplay: Disabled</div>
                 </div>
             </div>
         </div>
