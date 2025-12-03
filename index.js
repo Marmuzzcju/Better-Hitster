@@ -1,6 +1,6 @@
 console.log('Hello World!');
 const
-build_version = 2124031225,
+build_version = 2238031225,
 hidden_canvas = document.querySelector('#hidden-canvas'),
 background_canvas = document.querySelector('#background-canvas'),
 loading_overlay = document.querySelector('#loading-overlay'),
@@ -362,6 +362,13 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
                 handle_spotify_ready();
             });
         }
+        EmbedController.addListener('playback_update', e => {
+            if(e.data.isPaused && song_is_playing){
+                //stop
+                toggle_song_play();
+                console.log('%cPAUSED PLAY BUTTON', Non_critical_error_log_style);
+            }
+        });
     };
     IFrameAPI.createController(element, options, callback);
     console.log('MAYBE READY???');
