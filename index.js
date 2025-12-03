@@ -1,6 +1,6 @@
 console.log('Hello World!');
 const
-build_version = 2238031225,
+build_version = 2248031225,
 hidden_canvas = document.querySelector('#hidden-canvas'),
 background_canvas = document.querySelector('#background-canvas'),
 loading_overlay = document.querySelector('#loading-overlay'),
@@ -44,6 +44,7 @@ min = Math.min(max_height, max_width);
 background_canvas.width = min;
 background_canvas.height = min;
 draw_logo(b_ctx, min * 0.9, min * 0.05, 1);
+document.querySelector('#version-identifier').innerHTML+=build_version;
 
 
 function show_loading(visible = true){
