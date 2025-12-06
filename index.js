@@ -1,6 +1,6 @@
 console.log('Hello World!');
 const
-build_version = 1615061225,
+build_version = 2117061225,
 hidden_canvas = document.querySelector('#hidden-canvas'),
 background_canvas = document.querySelector('#background-canvas'),
 loading_overlay = document.querySelector('#loading-overlay'),
@@ -15,7 +15,11 @@ button_toggle_play = document.querySelector('#toggle-play'),
 song_list = [],
 user_settings = {
     autoplay: false,
+    debuging: false,
 },
+user_settings_save = [
+    'autoplay'
+],
 critical_error_log_style = `background-color: red;padding: 2px;font-weight: bolder;font-size: large;`,
 non_critical_error_log_style = `background-color: rgba(255,0,0,0.7);padding: 1px;font-weight: bold;`,
 colors = {
@@ -37,7 +41,8 @@ camera_has_started   = false,
 search_cycle        = 0,
 previous_song_load  = 0,
 current_song_load   = 0,
-song_is_playing     = false;
+song_is_playing     = false,
+has_local_storage   = false;
 
 
 //setup
@@ -50,6 +55,16 @@ function setup(){
     background_canvas.height = min;
     draw_logo(b_ctx, min * 0.9, min * 0.05, 1);
     document.querySelector('#version-identifier').innerHTML+=build_version;
+
+    //session persistent values
+    if(typeof Storage !== undefined){
+        has_local_storage = true;
+        if(localStorage.getItem('BH_user-settings')){
+            JSON.parse(localStorage.getItem('BH_user-settings')).forEach(entry => {
+                toggle_setting(entry[0], entry[1]);
+            });
+        }
+    }
 }
 
 
@@ -79,16 +94,25 @@ function toggle_setting_visibility(target, may_show = true){
     else if(may_show) c.classList.add('visible');
 }
 
-function toggle_setting(setting){
+function toggle_setting(setting, value){
     if(user_settings?.[setting] === undefined){
         console.log(`%cError: Trying to modify "${setting}" while setting does not exist!!`, non_critical_error_log_style);
         return;
     }
-    let was_enabled = !user_settings[setting];
+    let was_enabled = value ?? !user_settings[setting];
     user_settings[setting] = was_enabled;
     switch(setting){
         case 'autoplay':{
             document.querySelector('#user-settings-autoplay').innerText = `Autoplay: ${was_enabled ? 'Enabled' : 'Disabled'}`;
+            break;
+        }
+        case 'debuging':{
+            document.querySelector('#user-settings-debuging').innerText = `Debuging: ${was_enabled ? 'Enabled' : 'Disabled'}`;
+            if(was_enabled){
+                document.querySelector('iframe').style.zIndex = '1000';
+            } else {
+                document.querySelector('iframe').style.zIndex = '-10';
+            }
             break;
         }
     }
@@ -419,5 +443,15 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
 };
 //https://open.spotify.com/intl-de/track/3SuxtjdFxY3RIaWyPgtkfk?si=23c1b3ea83364042
 //https://open.spotify.com/intl-de/track/5VUQsLff8A3ruAyCdTxqzg?si=d40ee0089af34787
+
+window.onbeforeunload = () => {
+    if(has_local_storage){
+        let entries = [];
+        user_settings_save.forEach(setting => {
+            entries.push([setting, user_settings[setting]]);
+        });
+        localStorage.setItem('BH_user-settings', JSON.stringify(entries));
+    }
+}
 
 setup();
