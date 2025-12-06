@@ -60,8 +60,15 @@
                 </div>
             </div>
         </div>
-        <video playsinline autoplay muted></video>
-        <div id="video-overlay"></div>
+        <video playsinline autoplay muted style="display: none;"></video>
+        <div id="scan-exit-anchor" class="hidden" onclick="abort_qr_search();">
+            <div></div>
+            <div></div>
+        </div>
+        <div id="video-overlay-anchor">
+            <div class="background_blurr"></div>
+            <div class="border_bars"></div>
+        </div>
         <div id="version-identifier">V</div>
         <canvas class="hidden" id="hidden-canvas" width="400" height="400" style="outline: 1px solid black;"></canvas>
     </div>

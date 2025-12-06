@@ -8,6 +8,11 @@
   initial-value: 1;
   inherits: false;
 }
+@property --scan_bar_width {
+  syntax: '<percentage>';
+  initial-value: 2%;
+  inherits: false;
+}
 
 body {
     background-color: cornflowerblue;
@@ -19,8 +24,8 @@ video {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 10;
-    /*outline: 10px solid red;*/
+    z-index: 11;
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 iframe {
@@ -80,13 +85,57 @@ iframe {
     background-color: cornflowerblue;
 }
 
+#scan-exit-anchor {
+    position: fixed;
+    top: 0.6rem;
+    right: 0.6rem;
+    z-index: 13;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 2rem;
+    border: 0.4rem solid rgba(0,0,0,0);
+    cursor: pointer;
+}
+#scan-exit-anchor div{
+    position: absolute;
+    z-index: inherit;
+    border-radius: 100% / 20%;
+    height: 100%;
+    width: 12.5%;
+    background: white;
+    transform-origin: center;
+    left: 43.75%;/*50% - (12.5% / 2)*/
+}
+#scan-exit-anchor > div:nth-child(1){
+    rotate: 45deg;
+}
+#scan-exit-anchor > div:nth-child(2){
+    rotate: -45deg;
+}
 div.video_overlay {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     z-index: 12;
-    box-shadow: 0 0 1000px 40px black;
+    transform: translate(-50%, -50%);
+    /*box-shadow: 0 0 1000px 40px black;*/
+}
+div.video_overlay .border_bars {
+    position: fixed;
+    top: -2%;
+    left: -2%;
+    width: calc(100% / 0.96);/*Eigentlich: [100% / (100% - 2 * var(--scan_bar_width))]*/
+    height: calc(100% / 0.96);
+    background: white;
+    clip-path: polygon(0 0, 25% 0, 25% var(--scan_bar_width), var(--scan_bar_width) var(--scan_bar_width), var(--scan_bar_width) 25%, 0 25%, 0 0, 100% 0, 100% 25%, calc(100% - var(--scan_bar_width)) 25%, calc(100% - var(--scan_bar_width)) var(--scan_bar_width), 75% var(--scan_bar_width), 75% 0, 100% 0, 100% 100%, 75% 100%, 75% calc(100% - var(--scan_bar_width)), calc(100% - var(--scan_bar_width)) calc(100% - var(--scan_bar_width)), calc(100% - var(--scan_bar_width)) 75%, 100% 75%, 100% 100%, 0 100%, 0 75%, var(--scan_bar_width) 75%, var(--scan_bar_width) calc(100% - var(--scan_bar_width)), 25% calc(100% - var(--scan_bar_width)), 25% 100%, 100% 100%, 100% 0);
+}
+div.video_overlay .background_blurr {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    outline: max(100vw, 100vh) solid rgba(0, 0, 0, 0.5);
 }
 
 #song-control-anchor {
@@ -195,7 +244,7 @@ div.video_overlay {
     left: 3rem;
     height: 0;
     width: 0;
-    z-index: 20;
+    z-index: 10;
 }
 #settings-anchor .button {
     position: absolute;

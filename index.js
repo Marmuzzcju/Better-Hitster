@@ -1,11 +1,12 @@
 console.log('Hello World!');
 const
-build_version = 2248031225,
+build_version = 1615061225,
 hidden_canvas = document.querySelector('#hidden-canvas'),
 background_canvas = document.querySelector('#background-canvas'),
 loading_overlay = document.querySelector('#loading-overlay'),
 video = document.querySelector('video'),
-video_overlay = document.querySelector('#video-overlay');
+video_overlay = document.querySelector('#video-overlay-anchor');
+scan_exit_btn = document.querySelector('#scan-exit-anchor');
 h_ctx = hidden_canvas.getContext('2d'),
 b_ctx = background_canvas.getContext('2d'),
 spotify_trigger = document.querySelector('#spotify-trigger'),
@@ -25,26 +26,31 @@ colors = {
 };
 
 let
-QR_scan_width = 400,
-is_searching = false,
+QR_scan_width       = 400,
+video_width         = 600,
+video_height        = 600,
+is_searching        = false,
 spotify_controler,
 camera_stream,
-first_song_loaded = false,
-search_cycle = 0,
-previous_song_load = 0,
-current_song_load = 0,
-song_is_playing = false;
+first_song_loaded   = false,
+camera_has_started   = false,
+search_cycle        = 0,
+previous_song_load  = 0,
+current_song_load   = 0,
+song_is_playing     = false;
 
 
 //setup
-const 
-max_width = window.innerWidth,
-max_height = window.innerHeight * 0.65,
-min = Math.min(max_height, max_width);
-background_canvas.width = min;
-background_canvas.height = min;
-draw_logo(b_ctx, min * 0.9, min * 0.05, 1);
-document.querySelector('#version-identifier').innerHTML+=build_version;
+function setup(){
+    const
+    max_width = window.innerWidth,
+    max_height = window.innerHeight * 0.65,
+    min = Math.min(max_height, max_width);
+    background_canvas.width = min;
+    background_canvas.height = min;
+    draw_logo(b_ctx, min * 0.9, min * 0.05, 1);
+    document.querySelector('#version-identifier').innerHTML+=build_version;
+}
 
 
 function show_loading(visible = true){
@@ -92,20 +98,27 @@ function start_qr_search(){
     song_control_element.style.display = 'none';
     search_cycle = 0;
     if(song_is_playing) toggle_song_play();
-    if(!first_song_loaded) start_camera();
+    if(!camera_has_started) start_camera();
     else {
         pause_camera(false);
         setTimeout(repeat_qr_search, 250, true);
     }
 }
 
+function abort_qr_search(){
+    song_control_element.style.display = 'inline';
+    pause_camera(true);
+    repeat_qr_search(false);
+}
+
 function start_camera(){/*
     video.setAttribute('playsinline', '');
     video.setAttribute('autoplay', '');
-    video.setAttribute('muted', '');
-    /*video.setAttribute('width', '320px');
-    video.setAttribute('height', '800px');/
-    document.body.appendChild(video);*/
+    video.setAttribute('muted', '');*/
+    video.setAttribute('width', window.innerWidth);
+    video.setAttribute('height', window.innerHeight);
+    video.style.display = 'inline';
+    /*document.body.appendChild(video);*/
 
     /* Setting up the constraint */
     let facingMode = "environment"; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
@@ -120,6 +133,7 @@ function start_camera(){/*
     navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
         camera_stream = stream;
         video.srcObject = stream;
+        camera_has_started = true;
         add_video_overlay();
         setTimeout(repeat_qr_search, 250, true);
     });
@@ -132,17 +146,42 @@ function pause_camera(pause = true){
     videoTrack.enabled = !pause;
     video.style.display = display_property;
     video_overlay.style.display = display_property;
+    scan_exit_btn.classList[pause ? 'add' : 'remove']('hidden');
 }
 
 function add_video_overlay(){
-    const v_w = video.videoWidth, v_h = video.videoHeight;
-    QR_scan_width = (v_h >= QR_scan_width) == (v_w >= QR_scan_width) ? QR_scan_width : (v_h > v_w ? v_w : v_h),
+    video_width = window.innerWidth;
+    video_height = window.innerHeight;
+    QR_scan_width = Math.min(video_width, video_height) * 0.7;//(v_h >= QR_scan_width) == (v_w >= QR_scan_width) ? QR_scan_width : (v_h > v_w ? v_w : v_h),
     video_overlay.classList.add('video_overlay');
     video_overlay.style.width = `${QR_scan_width}px`;
     video_overlay.style.height = `${QR_scan_width}px`;
+    scan_exit_btn.classList.remove('hidden');
     console.log(`QR-scan width: ${QR_scan_width}`);
     //document.querySelector('#overlay').appendChild(video_overlay);
 }
+
+//testing ? vs min
+/*const
+number_set      = [],
+smal_set_min    = [],
+smal_set_tern   = [],
+random_int      = (max, min) => {Math.floor(Math.random() * (max-min)) + max},
+random_float    = (max, min) => {Math.random() * (max-min) + max};
+for(let c=0;c<100000;c++){
+    number_set.push([random_int(0, 1000), random_int(0, 1000)]);
+}
+console.time('min time');
+number_set.forEach(set => {
+    smal_set_min.push(Math.min(set[0], set[1]));
+});
+console.timeEnd('min time');
+console.time('tern time');
+number_set.forEach(set => {
+    smal_set_tern.push(set[0] < set[1] ? set[0] : set[1]);
+});
+console.timeEnd('tern time');
+*/
 
 function repeat_qr_search(search){
     is_searching = search ?? is_searching;
@@ -156,19 +195,21 @@ function repeat_qr_search(search){
 
 
 function search_qr_code(){
+    console.log('Searching QR Code')
     search_cycle++;
     if(search_cycle < 3) return;
-    let
+    const
     v_w = video.videoWidth, v_h = video.videoHeight,
-    offset_w = (v_w - QR_scan_width)/2,
-    offset_h = (v_h - QR_scan_width)/2;
-    hidden_canvas.width = video.videoWidth;
-    hidden_canvas.height = video.videoHeight;
-    h_ctx.drawImage(video, 0, 0, hidden_canvas.width, hidden_canvas.height);
+    real_scan_width = Math.ceil(QR_scan_width / Math.min(video_height / v_h, video_width / v_w)),
+    offset_w = (v_w - real_scan_width) / 2,
+    offset_h = (v_h - real_scan_width) / 2;
+    hidden_canvas.width = real_scan_width;
+    hidden_canvas.height = real_scan_width;
+    h_ctx.drawImage(video, offset_w, offset_h, real_scan_width, real_scan_width, 0, 0, real_scan_width, real_scan_width);
     
     const
-    imageData = h_ctx.getImageData(offset_w, offset_h, QR_scan_width, QR_scan_width),
-    code = jsQR(imageData.data, QR_scan_width, QR_scan_width);
+    imageData = h_ctx.getImageData(0, 0, real_scan_width, real_scan_width),
+    code = jsQR(imageData.data, real_scan_width, real_scan_width);
 
     if (code) {
         handle_qr_data(code.data);
@@ -378,3 +419,5 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
 };
 //https://open.spotify.com/intl-de/track/3SuxtjdFxY3RIaWyPgtkfk?si=23c1b3ea83364042
 //https://open.spotify.com/intl-de/track/5VUQsLff8A3ruAyCdTxqzg?si=d40ee0089af34787
+
+setup();
