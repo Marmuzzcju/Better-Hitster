@@ -1,6 +1,6 @@
 console.log('Hello World!');
 const
-build_version = 1827030126,
+build_version = 1833030126,
 hidden_canvas = document.querySelector('#hidden-canvas'),
 background_canvas = document.querySelector('#background-canvas'),
 loading_overlay = document.querySelector('#loading-overlay'),
@@ -260,6 +260,9 @@ function handle_qr_data(data){
         console.log(`Attempting to open: ${uri}`);
         spotify_load_song(uri);
     } else if(data.split(':')[0] == 'spotify'){
+        repeat_qr_search(false);
+        pause_camera(true);
+        show_loading();
         console.log(`Attempting to open: ${data}`);
         spotify_load_song(data);
     }
