@@ -1,6 +1,6 @@
 console.log('Hello World!');
 const
-build_version = 2117061225,
+build_version = 1827030126,
 hidden_canvas = document.querySelector('#hidden-canvas'),
 background_canvas = document.querySelector('#background-canvas'),
 loading_overlay = document.querySelector('#loading-overlay'),
@@ -45,7 +45,6 @@ song_is_playing     = false,
 has_local_storage   = false;
 
 
-//setup
 function setup(){
     const
     max_width = window.innerWidth,
@@ -247,6 +246,8 @@ function handle_qr_data(data){
     //https://open.spotify.com/intl-de/track/32HXNzxH5Nm8U9Qmk9qxOd?si=6cd667aeafda476c
     //https://open.spotify.com/intl-de/track/58triUtuAX5ZbfyOeogCJ6?si=fc183afc7c754269
     //what we need is this part:      [****************************]
+    //also supported via my print template if the following spotify shortening:
+    //spotify:track:4v8GJxLdvUiN7R31cKcmNL
     let split = data.split('/');
     console.log(`QR Data as split:`);
     console.log(split);
@@ -258,6 +259,9 @@ function handle_qr_data(data){
         let uri = `spotify:${split.at(-2)/*should be 'track'*/}:${split.at(-1).split('?')[0]/*uri tag*/}`;
         console.log(`Attempting to open: ${uri}`);
         spotify_load_song(uri);
+    } else if(data.split(':')[0] == 'spotify'){
+        console.log(`Attempting to open: ${data}`);
+        spotify_load_song(data);
     }
 }
 

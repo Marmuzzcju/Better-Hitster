@@ -141,7 +141,7 @@ div.video_overlay .background_blurr {
 #song-control-anchor {
     /*display: none;*/
     position: fixed;
-    bottom: 10rem;
+    bottom: 13rem;
     left: 50%;
     height: 5%;
     transform: translate(-50%, 0);
@@ -152,17 +152,17 @@ div.video_overlay .background_blurr {
     position: absolute;
     background-color: black;
     border-radius: 100%;
-    width: 6rem;
-    height: 6rem;
+    width: 12rem;
+    height: 12rem;
     box-shadow: black 0 0 5px;
     cursor: pointer;/*only affects pc devices*/
 }
 #song-control-anchor > .return-previous-song {
-    right: 4rem;
+    right: 8rem;
     transition: 1s;
 }
 #song-control-anchor > .return-previous-song.solo {
-    right: -3rem;
+    right: -6rem;
 }
 #song-control-anchor > .return-previous-song > img {
     position: absolute;
@@ -174,32 +174,34 @@ div.video_overlay .background_blurr {
 }
 
 #song-control-anchor > .qr-scan-trigger {
-    left: 4rem;
+    left: 8rem;
     transition: 1s;
 }
 #song-control-anchor > .qr-scan-trigger.solo {
-    left: -3rem;
+    left: -6rem;
 }
 #song-control-anchor > .qr-scan-trigger .visual {
     position: absolute;
     background-color: inherit;
     color: white;
     text-align: center;
-    line-height: 3rem;
+    line-height: 6rem;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 3rem;
-    height: 3rem;
+    width: 6rem;
+    height: 6rem; 
+    font-size: 2rem;
+    font-weight: bolder;
 }
 #song-control-anchor > .qr-scan-trigger .visual.child {
-    width: 1rem;
-    height: 1rem;
+    width: 2rem;
+    height: 2rem;
     box-shadow: 
-    white 1.1rem 1.1rem,
-    white -1.1rem 1.1rem,
-    white 1.1rem -1.1rem,
-    white -1.1rem -1.1rem;
+    white 2.2rem 2.2rem,
+    white -2.2rem 2.2rem,
+    white 2.2rem -2.2rem,
+    white -2.2rem -2.2rem;
 }
 
 #song-control-anchor > .toggle-play {
@@ -240,8 +242,8 @@ div.video_overlay .background_blurr {
 
 #settings-anchor {
     position: fixed;
-    bottom: 3rem;
-    left: 3rem;
+    bottom: 6rem;
+    left: 6rem;
     height: 0;
     width: 0;
     z-index: 10;
@@ -250,12 +252,13 @@ div.video_overlay .background_blurr {
     position: absolute;
     background-color: black;
     border-radius: 100%;
-    width: 3rem;
-    height: 3rem;
-    box-shadow: black 0 0 5px 0.5rem, black 0 0 0 0.5rem;
+    width: 7vh;
+    height: 7vh;
+    box-shadow: black 0 0 1vh 0.1vh;
+    border: 1vh solid black;
     cursor: pointer;/*only affects pc devices*/
-    left: -1.5rem;
-    top: -1.5rem;
+    left: -4.5vh;
+    top: -4.5vh;
     /*color: white;
     text-align: center;
     line-height: 4rem;
